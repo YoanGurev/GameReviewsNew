@@ -70,7 +70,7 @@ namespace GameReviews.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Reviewer")]
+        [Microsoft.AspNetCore.Authorization.Authorize]
         public async Task<IActionResult> PostReview(ReviewViewModel model)
         {
             if (!ModelState.IsValid)

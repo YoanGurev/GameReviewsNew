@@ -48,7 +48,7 @@ namespace GameReviews.Data
 
             builder.Entity<Favorite>()
            .HasIndex(f => new { f.UserId, f.GameId })
-           .IsUnique(); // Prevent duplicates
+           .IsUnique(); //Prevent duplicates
         }
     }
 }

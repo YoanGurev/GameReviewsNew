@@ -28,14 +28,29 @@ namespace GameReviews.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        [Route("Home/Error404")]
         public IActionResult Error404()
         {
             return View("Error404");
         }
 
+        [Route("Home/Error500")]
         public IActionResult Error500()
         {
             return View("Error500");
+        }
+
+        [Route("Home/Error{code:int}")]
+        public IActionResult Error(int code)
+        {
+            if (code == 404)
+                return RedirectToAction("Error404");
+            if (code == 500)
+                return RedirectToAction("Error500");
+
+            
+            return View("Error", code);
         }
 
     }

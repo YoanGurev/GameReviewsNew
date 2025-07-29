@@ -36,6 +36,16 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseStatusCodePages(async context =>
+{
+    var response = context.HttpContext.Response;
+    if (response.StatusCode == 400)
+    {
+        await response.WriteAsync("400 Bad Request: Possibly an antiforgery token issue.");
+    }
+});
+
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Games}/{action=Index}/{id?}");
@@ -43,13 +53,14 @@ app.MapControllerRoute(
 app.MapRazorPages();
 app.MapDefaultControllerRoute();
 
-// Role + Admin Seeding 
-using (var scope = app.Services.CreateScope())
+// Role + Admin Seeding
+Task.Run(async () =>
 {
+    using var scope = app.Services.CreateScope();
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-    string[] roles = { "Admin", "Reviewer", "Guest" };
+    string[] roles = { "Admin", "Guest" };
 
     foreach (var role in roles)
     {
@@ -78,9 +89,10 @@ using (var scope = app.Services.CreateScope())
             await userManager.AddToRoleAsync(newAdmin, "Admin");
         }
     }
-}
+}).GetAwaiter().GetResult();
 
 app.Run();
+
 
 
 

@@ -1,0 +1,30 @@
+﻿@model IEnumerable<GameReviews.Models.Favorite>
+
+@{
+    ViewData["Title"] = "My Favorites";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+@if (!Model.Any())
+{
+    <p>You have no favorite games yet.</p>
+}
+else
+{
+    <div class="row">
+        @foreach (var favorite in Model)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@favorite.Game.Title</h5>
+                        <p class="card-text">@favorite.Game.Description?.Substring(0, Math.Min(favorite.Game.Description.Length, 100))...</p>
+                        <a asp-controller="Games" asp-action="Details" asp-route-id="@favorite.GameId" class="btn btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+

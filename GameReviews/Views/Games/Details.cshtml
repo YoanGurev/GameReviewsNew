@@ -3,7 +3,6 @@
     ViewData["Title"] = Model.Title;
 }
 
-
 <h2>@Model.Title</h2>
 <p class="text-muted">@Model.Genre?.Name | @Model.Platform?.Name</p>
 
@@ -55,20 +54,19 @@ else
 
         <button type="submit" class="btn btn-primary">Submit Review</button>
     </form>
-}
-else
-{
-    <p><a href="/Identity/Account/Login">Log in</a> to post a review.</p>
-}
-@if (User.Identity.IsAuthenticated)
-{
-    <form asp-controller="Favorites" asp-action="Toggle" method="post">
+
+    <form asp-controller="Favorites" asp-action="Toggle" method="post" class="mt-3">
         <input type="hidden" name="gameId" value="@Model.Id" />
-        <button class="btn btn-warning mt-2">
+        <button type="submit" class="btn btn-warning">
             @(Model.Favorites?.Any(f => f.UserId == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value) == true
                     ? "Remove from Favorites"
                     : "Add to Favorites")
     </button>
 </form>
 }
+else
+{
+    <p><a href="/Identity/Account/Login">Log in</a> to post a review.</p>
+}
+
 
