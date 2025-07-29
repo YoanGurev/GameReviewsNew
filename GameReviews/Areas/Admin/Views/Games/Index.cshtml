@@ -1,0 +1,39 @@
+﻿@model IEnumerable<GameReviews.Models.Game>
+@{
+    ViewData["Title"] = "Manage Games";
+}
+
+<h2>Manage Games</h2>
+
+<p>
+    <a class="btn btn-success" asp-action="Create">+ Add New Game</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Genre</th>
+            <th>Platform</th>
+            <th>Price</th> 
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var game in Model)
+        {
+            <tr>
+                <td>@game.Title</td>
+                <td>@game.Genre?.Name</td>
+                <td>@game.Platform?.Name</td>
+                <td>@($"{game.Price:C}")</td> 
+                <td>
+                    <a asp-action="Edit" asp-route-id="@game.Id" class="btn btn-sm btn-primary">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@game.Id" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+
+</table>
+

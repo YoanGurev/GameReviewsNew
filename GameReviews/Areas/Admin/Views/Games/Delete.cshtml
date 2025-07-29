@@ -1,0 +1,28 @@
+﻿@model GameReviews.Models.Game
+@{
+    ViewData["Title"] = "Delete Game";
+}
+
+<h2>Delete Game</h2>
+
+<div class="alert alert-danger">
+    Are you sure you want to delete <strong>@Model.Title</strong>?
+</div>
+
+<dl class="row">
+    <dt class="col-sm-3">Genre</dt>
+    <dd class="col-sm-9">@Model.Genre?.Name</dd>
+
+    <dt class="col-sm-3">Platform</dt>
+    <dd class="col-sm-9">@Model.Platform?.Name</dd>
+
+    <dt class="col-sm-3">Price</dt>
+    <dd class="col-sm-9">@($"{Model.Price:C}")</dd>
+</dl>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+

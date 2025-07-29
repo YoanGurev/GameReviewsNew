@@ -1,0 +1,74 @@
+﻿@model GameReviews.Models.Game
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+
+<h2>@Model.Title</h2>
+<p class="text-muted">@Model.Genre?.Name | @Model.Platform?.Name</p>
+
+@if (!string.IsNullOrWhiteSpace(Model.Description))
+{
+    <p>@Model.Description</p>
+}
+
+<hr />
+<h4>Reviews</h4>
+
+@if (Model.Reviews.Any())
+{
+    <div class="list-group">
+        @foreach (var review in Model.Reviews.OrderByDescending(r => r.CreatedAt))
+        {
+            <div class="list-group-item">
+                <strong>@review.User.UserName</strong>
+                <span class="text-warning">Rating: @review.Rating/10</span><br />
+                <small class="text-muted">@review.CreatedAt.ToLocalTime().ToString("g")</small>
+                <p>@review.Content</p>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p class="text-muted">No reviews yet for this game.</p>
+}
+
+@if (User.Identity.IsAuthenticated)
+{
+    <hr />
+    <h4>Add Your Review</h4>
+
+    <form asp-action="PostReview" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="GameId" value="@Model.Id" />
+
+        <div class="mb-3">
+            <label for="Rating" class="form-label">Rating (1-10)</label>
+            <input type="number" name="Rating" min="1" max="10" class="form-control" required />
+        </div>
+
+        <div class="mb-3">
+            <label for="Content" class="form-label">Review</label>
+            <textarea name="Content" class="form-control" rows="4" required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit Review</button>
+    </form>
+}
+else
+{
+    <p><a href="/Identity/Account/Login">Log in</a> to post a review.</p>
+}
+@if (User.Identity.IsAuthenticated)
+{
+    <form asp-controller="Favorites" asp-action="Toggle" method="post">
+        <input type="hidden" name="gameId" value="@Model.Id" />
+        <button class="btn btn-warning mt-2">
+            @(Model.Favorites?.Any(f => f.UserId == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value) == true
+                    ? "Remove from Favorites"
+                    : "Add to Favorites")
+    </button>
+</form>
+}
+

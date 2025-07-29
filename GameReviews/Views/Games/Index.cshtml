@@ -1,0 +1,107 @@
+﻿@model GameReviews.Models.ViewModels.PaginatedList<GameReviews.Models.Game>
+@{
+    ViewData["Title"] = "Browse Games";
+    var genres = ViewBag.Genres as List<string> ?? new List<string>();
+    var platforms = ViewBag.Platforms as List<string> ?? new List<string>();
+
+    var query = Context.Request.Query;
+    var search = query["search"].ToString();
+    var selectedGenre = query["genre"].ToString();
+    var selectedPlatform = query["platform"].ToString();
+}
+
+
+<h2 class="mb-3">Browse Games</h2>
+
+<form method="get" class="mb-4">
+    <div class="row g-2 align-items-end">
+        <div class="col-md-3">
+            <input type="text" name="search" value="@search" class="form-control" placeholder="Search by title..." />
+        </div>
+
+        <div class="col-md-3">
+            <select name="genre" class="form-select">
+                <option value="">-- Filter by Genre --</option>
+                @foreach (var genre in genres)
+                {
+                    <option value="@genre" selected="@(genre == selectedGenre)">
+                        @genre
+                    </option>
+                }
+            </select>
+
+            <select name="platform" class="form-select">
+                <option value="">-- Filter by Platform --</option>
+                @foreach (var platform in platforms)
+                {
+                    <option value="@platform" selected="@(platform == selectedPlatform)">
+                        @platform
+                    </option>
+                }
+            </select>
+
+        </div>
+
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary w-100">Search & Filter</button>
+        </div>
+    </div>
+</form>
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    @foreach (var game in Model)
+    {
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">@game.Title</h5>
+                    <p class="card-text text-muted">
+                        @game.Genre?.Name | @game.Platform?.Name
+                    </p>
+                    <p class="card-text"><strong>Price:</strong> @($"{game.Price:C}")
+                    </p>
+
+                    <p class="card-text">
+                        @if (!string.IsNullOrWhiteSpace(game.Description))
+                        {
+                            @($"{game.Description.Substring(0, Math.Min(120, game.Description.Length))}...")
+                        }
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <a href="@Url.Action("Details", "Games", new { id = game.Id })" class="btn btn-outline-primary w-100">
+                        View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<nav class="mt-4">
+    <ul class="pagination justify-content-center">
+        @if (Model.HasPreviousPage)
+        {
+            <li class="page-item">
+                <a class="page-link" href="@Url.Action("Index", new { page = Model.PageIndex - 1, search = search })">Previous</a>
+            </li>
+        }
+
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                <a class="page-link" href="@Url.Action("Index", new { page = i, search = search })">@i</a>
+            </li>
+        }
+
+        @if (Model.HasNextPage)
+        {
+            <li class="page-item">
+                <a class="page-link" href="@Url.Action("Index", new { page = Model.PageIndex + 1, search = search })">Next</a>
+            </li>
+        }
+    </ul>
+</nav>
+
+
+
