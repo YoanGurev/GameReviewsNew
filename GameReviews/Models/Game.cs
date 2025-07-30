@@ -18,7 +18,7 @@ namespace GameReviews.Models
         public double Rating { get; set; }
 
         [Range(0, 1000)]
-        public decimal Price { get; set; }   
+        public decimal Price { get; set; }
 
         public int GenreId { get; set; }
         public Genre Genre { get; set; }
@@ -28,6 +28,12 @@ namespace GameReviews.Models
 
         public ICollection<Review> Reviews { get; set; } = new List<Review>();
         public ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
+
+        [Url(ErrorMessage = "Please enter a valid image URL.")]
+        public string? ImageUrl { get; set; }
+
+        [Url(ErrorMessage = "Please enter a valid video URL.")]
+        public string? VideoUrl { get; set; }
 
     }
 }

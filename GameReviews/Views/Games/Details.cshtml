@@ -33,6 +33,21 @@ else
     <p class="text-muted">No reviews yet for this game.</p>
 }
 
+@if (!string.IsNullOrEmpty(Model.ImageUrl))
+{
+    <div>
+        <img src="@Model.ImageUrl" alt="@Model.Title" style="max-width: 400px; height: auto;" />
+    </div>
+}
+
+
+@if (!string.IsNullOrEmpty(Model.VideoUrl))
+{
+    <div class="video-container" style="max-width: 560px; margin-top: 20px;">
+        <iframe width="560" height="315" src="@Model.VideoUrl" frameborder="0" allowfullscreen></iframe>
+    </div>
+}
+
 @if (User.Identity.IsAuthenticated)
 {
     <hr />

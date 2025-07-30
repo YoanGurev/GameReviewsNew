@@ -8,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services
 builder.Services.AddControllersWithViews();
 
+
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -17,6 +19,16 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 })
 .AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequiredLength = 6;
+});
+
 
 var app = builder.Build();
 
@@ -45,6 +57,10 @@ app.UseStatusCodePages(async context =>
     }
 });
 
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
 
 app.MapControllerRoute(
     name: "default",
@@ -60,7 +76,7 @@ Task.Run(async () =>
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-    string[] roles = { "Admin", "Guest" };
+    string[] roles = { "Administrator", "Guest" };
 
     foreach (var role in roles)
     {
@@ -86,7 +102,7 @@ Task.Run(async () =>
         var result = await userManager.CreateAsync(newAdmin, adminPassword);
         if (result.Succeeded)
         {
-            await userManager.AddToRoleAsync(newAdmin, "Admin");
+            await userManager.AddToRoleAsync(newAdmin, "Administrator");
         }
     }
 }).GetAwaiter().GetResult();

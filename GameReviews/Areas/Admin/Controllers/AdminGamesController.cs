@@ -8,12 +8,12 @@ using Microsoft.EntityFrameworkCore;
 namespace GameReviews.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin")]
-    public class AdminController : Controller
+    [Authorize(Roles = "Administrator")]
+    public class AdminGamesController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public AdminController(ApplicationDbContext context)
+        public AdminGamesController(ApplicationDbContext context)
         {
             _context = context;
         }

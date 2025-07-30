@@ -53,6 +53,10 @@
     {
         <div class="col">
             <div class="card h-100 shadow-sm">
+                @if (!string.IsNullOrWhiteSpace(game.ImageUrl))
+                {
+                    <img src="@game.ImageUrl" alt="@game.Title" class="card-img-top" style="max-height: 150px; object-fit: contain;" />
+                }
                 <div class="card-body">
                     <h5 class="card-title">@game.Title</h5>
                     <p class="card-text text-muted">
