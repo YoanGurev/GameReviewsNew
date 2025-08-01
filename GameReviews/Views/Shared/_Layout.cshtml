@@ -62,6 +62,13 @@
                                 <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
                             </li>
                         }
+                        @if (TempData["SuccessMessage"] != null)
+                        {
+                            <div class="alert alert-success text-center">
+                                @TempData["SuccessMessage"]
+                            </div>
+                        }
+
                     </ul>
                 </div>
             </div>

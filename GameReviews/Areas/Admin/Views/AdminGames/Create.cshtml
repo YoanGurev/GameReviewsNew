@@ -4,8 +4,13 @@
 }
 
 <h2>Create Game</h2>
+@* Display non-field-specific validation errors *@
+<partial name="_ValidationScriptsPartial" />
+<div asp-validation-summary="All" class="text-danger"></div>
+
 
 <form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
     <div class="mb-3">
         <label asp-for="Title" class="form-label">Game Title</label>
         <input asp-for="Title" class="form-control" />
@@ -36,9 +41,6 @@
         <span asp-validation-for="PlatformId" class="text-danger"></span>
     </div>
 
-    <button type="submit" class="btn btn-primary">Create</button>
-    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-
     <div class="mb-3">
         <label asp-for="ImageUrl" class="form-label">Image URL</label>
         <input asp-for="ImageUrl" class="form-control" placeholder="https://example.com/image.jpg" />
@@ -46,12 +48,10 @@
     </div>
 
     <div class="mb-3">
-        <label asp-for="VideoUrl" class="form-label">Video URL (e.g., YouTube)</label>
+        <label asp-for="VideoUrl" class="form-label">Video URL (YouTube, etc.)</label>
         <input asp-for="VideoUrl" class="form-control" placeholder="https://youtube.com/..." />
         <span asp-validation-for="VideoUrl" class="text-danger"></span>
     </div>
-
-    
 
     <button type="submit" class="btn btn-primary">Create</button>
     <a asp-action="Index" class="btn btn-secondary">Cancel</a>
@@ -60,6 +60,7 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+
 
 
 

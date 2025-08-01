@@ -1,4 +1,5 @@
-﻿using GameReviews.Data;
+﻿using GameReviews.Helpers;
+using GameReviews.Data;
 using GameReviews.Models;
 using GameReviews.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;

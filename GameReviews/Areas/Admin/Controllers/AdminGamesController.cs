@@ -18,7 +18,7 @@ namespace GameReviews.Areas.Admin.Controllers
             _context = context;
         }
 
-        //GET Admin
+        // GET: AdminGames
         public async Task<IActionResult> Index()
         {
             var games = await _context.Games
@@ -29,18 +29,30 @@ namespace GameReviews.Areas.Admin.Controllers
             return View(games);
         }
 
-        //GET AdminCreate
+        // GET: AdminGames/Create
         public async Task<IActionResult> Create()
         {
             await LoadDropdownsAsync();
             return View();
         }
 
-        //POST Admin Create
+        // POST: AdminGames/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Game game)
         {
+            Console.WriteLine($"GenreId: {game.GenreId}, PlatformId: {game.PlatformId}");
+            if (!ModelState.IsValid)
+            {
+                foreach (var entry in ModelState)
+                {
+                    foreach (var error in entry.Value.Errors)
+                    {
+                        Console.WriteLine($"Error for {entry.Key}: {error.ErrorMessage}");
+                    }
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Games.Add(game);
@@ -52,7 +64,8 @@ namespace GameReviews.Areas.Admin.Controllers
             return View(game);
         }
 
-        //GET Admin Edit/5
+
+        // GET: AdminGames/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
             var game = await _context.Games.FindAsync(id);
@@ -62,25 +75,36 @@ namespace GameReviews.Areas.Admin.Controllers
             return View(game);
         }
 
-        //POST Admin Edit/5
+        // POST: AdminGames/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Game game)
         {
             if (id != game.Id) return NotFound();
 
+            if (!await _context.Games.AnyAsync(g => g.Id == id))
+                return NotFound();
+
             if (ModelState.IsValid)
             {
-                _context.Update(game);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    _context.Update(game);
+                    await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Game updated successfully.";
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateException)
+                {
+                    ModelState.AddModelError("", "Failed to update game. Try again.");
+                }
             }
 
             await LoadDropdownsAsync();
             return View(game);
         }
 
-        //GET Admin Delete/5
+        // GET: AdminGames/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
             var game = await _context.Games
@@ -93,22 +117,22 @@ namespace GameReviews.Areas.Admin.Controllers
             return View(game);
         }
 
-        //POST Admin Delete/5
+        // POST: AdminGames/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var game = await _context.Games.FindAsync(id);
-            if (game != null)
-            {
-                _context.Games.Remove(game);
-                await _context.SaveChangesAsync();
-            }
+            if (game == null) return NotFound();
 
+            _context.Games.Remove(game);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Game deleted successfully.";
             return RedirectToAction(nameof(Index));
         }
 
-        // Helper method to populate dropdowns
+        // Helper: load dropdowns for Genre and Platform
         private async Task LoadDropdownsAsync()
         {
             ViewBag.Genres = new SelectList(await _context.Genres.ToListAsync(), "Id", "Name");
@@ -116,4 +140,5 @@ namespace GameReviews.Areas.Admin.Controllers
         }
     }
 }
+
 

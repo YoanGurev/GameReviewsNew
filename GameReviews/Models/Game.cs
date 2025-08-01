@@ -21,10 +21,10 @@ namespace GameReviews.Models
         public decimal Price { get; set; }
 
         public int GenreId { get; set; }
-        public Genre Genre { get; set; }
+        public Genre? Genre { get; set; }
 
         public int PlatformId { get; set; }
-        public Platform Platform { get; set; }
+        public Platform? Platform { get; set; }
 
         public ICollection<Review> Reviews { get; set; } = new List<Review>();
         public ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
