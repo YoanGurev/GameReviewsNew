@@ -18,28 +18,39 @@ namespace GameReviews.Data
             await context.Database.MigrateAsync();
 
             // Seed Genres
-            if (!context.Genres.Any())
+            var allGenres = new[] {
+                    "Action", "Adventure", "Role-Playing (RPG)", "Simulation", "Strategy",
+                    "Shooter", "First Person Shooter (FPS)", "Puzzle", "Horror", "Platformer",
+                    "Fighting", "Sports", "Racing", "MMO", "Sandbox", "Survival", "Stealth",
+                    "Visual Novel", "Rhythm", "Card Game", "Trivia"
+            };
+
+            foreach (var genreName in allGenres)
             {
-                context.Genres.AddRange(
-                    new Genre { Name = "Action" },
-                    new Genre { Name = "Adventure" },
-                    new Genre { Name = "RPG" },
-                    new Genre { Name = "Shooter" },
-                    new Genre { Name = "Strategy" }
-                );
+                if (!context.Genres.Any(g => g.Name == genreName))
+                {
+                    context.Genres.Add(new Genre { Name = genreName });
+                }
             }
 
+
             // Seed Platforms
-            if (!context.Platforms.Any())
+            var allPlatforms = new[] {
+                   "PC", "PlayStation 5", "PlayStation 4", "Xbox 360", "Xbox Series X/S",
+                   "Xbox One", "Nintendo Switch", "Nintendo NES", "GameCube", "Nintendo 64",
+                   "Wii", "Game Boy", "Game Boy Advance", "Nintendo DS", "Nintendo 3DS",
+                   "Mobile (iOS/Android)", "Mac", "Linux", "Browser", "Steam Deck",
+                   "VR (Oculus)", "VR (HTC Vive)", "VR (Valve Index)", "VR (Meta Quest)"
+            };
+
+            foreach (var platformName in allPlatforms)
             {
-                context.Platforms.AddRange(
-                    new Platform { Name = "PC" },
-                    new Platform { Name = "PlayStation" },
-                    new Platform { Name = "Xbox" },
-                    new Platform { Name = "Nintendo Switch" },
-                    new Platform { Name = "Mobile" }
-                );
+                if (!context.Platforms.Any(p => p.Name == platformName))
+                {
+                    context.Platforms.Add(new Platform { Name = platformName });
+                }
             }
+
 
             await context.SaveChangesAsync();
 

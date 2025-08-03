@@ -105,6 +105,8 @@ Task.Run(async () =>
             await userManager.AddToRoleAsync(newAdmin, "Administrator");
         }
     }
+    await SeedData.InitializeAsync(scope.ServiceProvider);
+
 }).GetAwaiter().GetResult();
 
 app.Run();
