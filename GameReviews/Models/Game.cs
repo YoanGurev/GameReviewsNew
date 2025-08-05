@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-
+using System.Linq;
 namespace GameReviews.Models
 {
     public class Game
@@ -27,7 +27,9 @@ namespace GameReviews.Models
         public Platform? Platform { get; set; }
 
         public ICollection<Review> Reviews { get; set; } = new List<Review>();
+        public double AverageRating => Reviews.Any() ? Reviews.Average(r => r.Rating) : 0.0;
         public ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
+
 
         [Url(ErrorMessage = "Please enter a valid image URL.")]
         public string? ImageUrl { get; set; }

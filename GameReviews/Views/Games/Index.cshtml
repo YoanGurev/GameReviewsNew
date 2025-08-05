@@ -11,9 +11,14 @@
 }
 
 
-<h2 class="mb-3">Browse Games</h2>
+<h2 class="mb-3 text-light">Browse Games</h2>
 
 <form method="get" class="mb-4">
+    <div class="text-center my-5">
+        <h1 class="text-light mb-4 display-4">🎮 All Games</h1>
+        <p class="text-white lead">Browse all games by genre and platform</p>
+    </div>
+
     <div class="row g-2 align-items-end">
         <div class="col-md-3">
             <input type="text" name="search" value="@search" class="form-control" placeholder="Search by title..." />
@@ -53,37 +58,23 @@
     {
         <div class="col">
             <div class="card h-100 shadow-sm">
-                @if (!string.IsNullOrWhiteSpace(game.ImageUrl))
-                {
-                    <img src="@game.ImageUrl" alt="@game.Title" class="card-img-top" style="max-height: 150px; object-fit: contain;" />
-                }
+                <img src="@game.ImageUrl" class="card-img-top" alt="@game.Title" style="height: 200px; object-fit: cover;">
                 <div class="card-body">
                     <h5 class="card-title">@game.Title</h5>
-                    <p class="card-text text-muted">
-                        @game.Genre?.Name | @game.Platform?.Name
-                    </p>
-                    <p class="card-text"><strong>Price:</strong> @($"{game.Price:C}")
-                    </p>
                     <p class="card-text">
-                        <strong>Reviews:</strong> @(game.Reviews?.Count() ?? 0)
+                        <strong>Genre:</strong> @game.Genre?.Name <br />
+                        <strong>Platform:</strong> @game.Platform?.Name <br />
+                        <strong>Rating:</strong> @game.AverageRating.ToString("0.0") ⭐
                     </p>
-
-
-                    <p class="card-text">
-                        @if (!string.IsNullOrWhiteSpace(game.Description))
-                        {
-                            @($"{game.Description.Substring(0, Math.Min(120, game.Description.Length))}...")
-                        }
-                    </p>
-                </div>
-                <div class="card-footer">
-                    <a href="@Url.Action("Details", "Games", new { id = game.Id })" class="btn btn-outline-primary w-100">
-                        View Details
+                    <a asp-action="Details" asp-route-id="@game.Id" class="btn btn-primary">
+                        <i class="bi bi-info-circle"></i> View Details
                     </a>
                 </div>
             </div>
         </div>
     }
+</div>
+
 </div>
 
 <nav class="mt-4">

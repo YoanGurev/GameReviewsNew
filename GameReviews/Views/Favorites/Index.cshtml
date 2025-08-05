@@ -4,11 +4,11 @@
     ViewData["Title"] = "My Favorites";
 }
 
-<h1>@ViewData["Title"]</h1>
+<h1 class="text-light">@ViewData["Title"]</h1>
 
 @if (!Model.Any())
 {
-    <p>You have no favorite games yet.</p>
+    <p class="text-white">You have no favorite games yet.</p>
 }
 else
 {

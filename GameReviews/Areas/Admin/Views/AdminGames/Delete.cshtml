@@ -3,13 +3,14 @@
     ViewData["Title"] = "Delete Game";
 }
 
-<h2>Delete Game</h2>
+<h2 class="text-light">Delete Game</h2>
 
-<div class="alert alert-danger">
+
+<div class="alert alert-danger text-light">
     Are you sure you want to delete <strong>@Model.Title</strong>?
 </div>
 
-<dl class="row">
+<dl class="row text-light">
     <dt class="col-sm-3">Genre</dt>
     <dd class="col-sm-9">@Model.Genre?.Name</dd>
 
@@ -27,8 +28,8 @@
     <a asp-action="Index" class="btn btn-secondary">Cancel</a>
 </form>
 
-
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+
 
