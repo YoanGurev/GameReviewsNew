@@ -67,6 +67,29 @@ namespace GameReviews.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction("Details", "Games", new { id = gameId });
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Remove(int id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            var favorite = await _context.Favorites
+                .Include(f => f.Game)
+                .FirstOrDefaultAsync(f => f.UserId == user.Id && f.GameId == id);
+
+            if (favorite != null)
+            {
+                var gameTitle = favorite.Game?.Title ?? "the game";
+
+                _context.Favorites.Remove(favorite);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = $"You have successfully removed {gameTitle} from your favorites.";
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }
 

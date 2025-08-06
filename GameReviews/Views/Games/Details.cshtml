@@ -22,6 +22,9 @@
 
 <h2 class="text-white">@Model.Title</h2>
 <p class="text-light">@Model.Genre?.Name | @Model.Platform?.Name</p>
+<p class="text-light">
+    <strong>Price:</strong> @Model.Price.ToString("C")
+</p>
 
 @if (!string.IsNullOrWhiteSpace(Model.Description))
 {
