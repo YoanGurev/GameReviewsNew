@@ -20,27 +20,28 @@ namespace GameReviews.Controllers
             _userManager = userManager;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1, int pageSize = 6)
         {
             var user = await _userManager.GetUserAsync(User);
 
-            var favorites = await _context.Favorites
+            var query = _context.Favorites
                 .Where(f => f.UserId == user.Id)
                 .Include(f => f.Game)
                     .ThenInclude(g => g.Genre)
                 .Include(f => f.Game.Platform)
-                 .Select(f => new FavoritesViewModel
-                 {
-                     GameId = f.Game.Id,
-                     Title = f.Game.Title,
-                     GenreName = f.Game.Genre.Name,
-                     PlatformName = f.Game.Platform.Name,
-                     ImageUrl = f.Game.ImageUrl,
-                     Price = f.Game.Price
-                 })
-        .ToListAsync();
+                .Select(f => new FavoritesViewModel
+                {
+                    GameId = f.Game.Id,
+                    Title = f.Game.Title,
+                    GenreName = f.Game.Genre.Name,
+                    PlatformName = f.Game.Platform.Name,
+                    ImageUrl = f.Game.ImageUrl,
+                    Price = f.Game.Price
+                });
 
-            return View(favorites);
+            var pagedFavorites = await PaginatedList<FavoritesViewModel>.CreateAsync(query, page, pageSize);
+
+            return View(pagedFavorites);
         }
 
         [HttpPost]

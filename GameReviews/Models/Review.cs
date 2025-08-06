@@ -25,6 +25,9 @@ namespace GameReviews.Models
         
         public ApplicationUser? User { get; set; }
         public Game? Game { get; set; }
+        public int Upvotes { get; set; } = 0;
+        public int DownVotes { get; set; } = 0; 
+
     }
 }
 
