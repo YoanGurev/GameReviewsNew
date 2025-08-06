@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using GameReviews.Models;
+using GameReviews.Models.ViewModels;
 
 public class ContactController : Controller
 {
     public IActionResult Index() => View();
 
     [HttpPost]
-    public IActionResult Send(ContactForm model)
+    public IActionResult Send(ContactFormViewModel model)
     {
         if (!ModelState.IsValid)
             return View("Index", model);
