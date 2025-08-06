@@ -1,5 +1,6 @@
 ﻿using GameReviews.Data;
 using GameReviews.Models;
+using GameReviews.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -28,7 +29,16 @@ namespace GameReviews.Controllers
                 .Include(f => f.Game)
                     .ThenInclude(g => g.Genre)
                 .Include(f => f.Game.Platform)
-                .ToListAsync();
+                 .Select(f => new FavoritesViewModel
+                 {
+                     GameId = f.Game.Id,
+                     Title = f.Game.Title,
+                     GenreName = f.Game.Genre.Name,
+                     PlatformName = f.Game.Platform.Name,
+                     ImageUrl = f.Game.ImageUrl,
+                     Price = f.Game.Price
+                 })
+        .ToListAsync();
 
             return View(favorites);
         }
