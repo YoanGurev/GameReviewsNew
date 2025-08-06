@@ -1,0 +1,29 @@
+﻿@model List<GameReviews.Models.ContactForm>
+
+@{
+    ViewData["Title"] = "Admin Inbox";
+}
+
+<h2 class="text-light">Inbox</h2>
+
+@if (!Model.Any())
+{
+    <p class="text-light">No messages yet.</p>
+}
+else
+{
+    <div class="list-group">
+        @foreach (var message in Model)
+        {
+            <div class="list-group-item bg-dark text-light mb-3 rounded">
+                <h5>@message.Name (@message.Email)</h5>
+                <p><strong>Subject:</strong> @message.Subject</p>
+                <p>@message.Message</p>
+                <small class="text-muted">@message.SubmittedAt.ToLocalTime()</small>
+            </div>
+        }
+    </div>
+}
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

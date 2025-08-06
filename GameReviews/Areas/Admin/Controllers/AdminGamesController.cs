@@ -131,6 +131,7 @@ namespace GameReviews.Areas.Admin.Controllers
             TempData["SuccessMessage"] = "Game deleted successfully.";
             return RedirectToAction(nameof(Index));
         }
+        
 
         // Helper: load dropdowns for Genre and Platform
         private async Task LoadDropdownsAsync()
