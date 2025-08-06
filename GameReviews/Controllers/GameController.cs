@@ -1,7 +1,8 @@
-﻿using GameReviews.Helpers;
-using GameReviews.Data;
+﻿using GameReviews.Data;
+using GameReviews.Helpers;
 using GameReviews.Models;
 using GameReviews.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -94,6 +95,36 @@ namespace GameReviews.Controllers
 
             return RedirectToAction("Details", new { id = model.GameId });
         }
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> Upvote(int id)
+        {
+            var review = await _context.Reviews.FindAsync(id);
+            if (review != null)
+            {
+                review.Upvotes++;
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Details", new { id = review.GameId });
+            }
+
+            return NotFound();
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> Downvote(int id)
+        {
+            var review = await _context.Reviews.FindAsync(id);
+            if (review != null)
+            {
+                review.Downvotes++;
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Details", new { id = review.GameId });
+            }
+
+            return NotFound();
+        }
+
     }
 }
 

@@ -54,11 +54,27 @@
     <div class="list-group">
         @foreach (var review in Model.Reviews.OrderByDescending(r => r.CreatedAt))
         {
-            <div class="list-group-item">
+            <div class="list-group-item bg-dark text-light border-light rounded mb-2">
                 <strong>@review.User.UserName</strong>
                 <span class="text-warning">Rating: @review.Rating/10</span><br />
                 <small class="text-muted">@review.CreatedAt.ToLocalTime():g</small>
-                <p>@review.Content</p>
+                <p class="mt-2">@review.Content</p>
+
+                <div>
+                    <form asp-controller="Games" asp-action="Upvote" method="post" class="d-inline">
+                        <input type="hidden" name="id" value="@review.Id" />
+                        <button type="submit" class="btn btn-success btn-sm me-1">
+                            <i class="bi bi-hand-thumbs-up-fill"></i> @review.Upvotes
+                        </button>
+                    </form>
+
+                    <form asp-controller="Games" asp-action="Downvote" method="post" class="d-inline">
+                        <input type="hidden" name="id" value="@review.Id" />
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            <i class="bi bi-hand-thumbs-down-fill"></i> @review.Downvotes
+                        </button>
+                    </form>
+                </div>
             </div>
         }
     </div>
@@ -103,6 +119,7 @@ else
 {
     <p><a href="/Identity/Account/Login">Log in</a> to post a review.</p>
 }
+
 
 
 
