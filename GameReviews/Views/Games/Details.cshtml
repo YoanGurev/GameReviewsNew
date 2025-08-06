@@ -110,10 +110,10 @@ else
         <input type="hidden" name="gameId" value="@Model.Id" />
         <button type="submit" class="btn btn-warning">
             @(Model.Favorites?.Any(f => f.UserId == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value) == true
-                    ? "Remove from Favorites"
-                    : "Add to Favorites")
-    </button>
-</form>
+                ? "Remove from Favorites"
+                : "Add to Favorites")
+        </button>
+    </form>
 }
 else
 {

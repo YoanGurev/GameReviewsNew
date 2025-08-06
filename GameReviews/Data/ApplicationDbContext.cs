@@ -18,7 +18,7 @@ namespace GameReviews.Data
 
         public DbSet<Favorite> Favorites { get; set; }
         public DbSet<ContactForm> ContactForms { get; set; }
-
+        public DbSet<ReviewVote> ReviewVotes { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)

@@ -26,7 +26,9 @@ namespace GameReviews.Models
         public ApplicationUser? User { get; set; }
         public Game? Game { get; set; }
         public int Upvotes { get; set; } = 0;
-        public int Downvotes { get; set; } = 0; 
+        public int Downvotes { get; set; } = 0;
+        public ICollection<ReviewVote> Votes { get; set; } = new List<ReviewVote>();
+
 
     }
 }

@@ -99,31 +99,70 @@ namespace GameReviews.Controllers
         [Authorize]
         public async Task<IActionResult> Upvote(int id)
         {
-            var review = await _context.Reviews.FindAsync(id);
-            if (review != null)
+            var user = await _userManager.GetUserAsync(User);
+            var review = await _context.Reviews.Include(r => r.User).FirstOrDefaultAsync(r => r.Id == id);
+
+            if (review == null || review.UserId == user.Id)
+                return RedirectToAction("Details", new { id = review?.GameId });
+
+            var existingVote = await _context.ReviewVotes
+                .FirstOrDefaultAsync(v => v.ReviewId == id && v.UserId == user.Id);
+
+            if (existingVote == null)
             {
+                _context.ReviewVotes.Add(new ReviewVote
+                {
+                    ReviewId = id,
+                    UserId = user.Id,
+                    IsUpvote = true
+                });
                 review.Upvotes++;
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Details", new { id = review.GameId });
+            }
+            else if (!existingVote.IsUpvote)
+            {
+                existingVote.IsUpvote = true;
+                review.Upvotes++;
+                review.Downvotes--;
             }
 
-            return NotFound();
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Details", new { id = review.GameId });
         }
 
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> Downvote(int id)
         {
-            var review = await _context.Reviews.FindAsync(id);
-            if (review != null)
+            var user = await _userManager.GetUserAsync(User);
+            var review = await _context.Reviews.Include(r => r.User).FirstOrDefaultAsync(r => r.Id == id);
+
+            if (review == null || review.UserId == user.Id)
+                return RedirectToAction("Details", new { id = review?.GameId });
+
+            var existingVote = await _context.ReviewVotes
+                .FirstOrDefaultAsync(v => v.ReviewId == id && v.UserId == user.Id);
+
+            if (existingVote == null)
             {
+                _context.ReviewVotes.Add(new ReviewVote
+                {
+                    ReviewId = id,
+                    UserId = user.Id,
+                    IsUpvote = false
+                });
                 review.Downvotes++;
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Details", new { id = review.GameId });
+            }
+            else if (existingVote.IsUpvote)
+            {
+                existingVote.IsUpvote = false;
+                review.Downvotes++;
+                review.Upvotes--;
             }
 
-            return NotFound();
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Details", new { id = review.GameId });
         }
+
 
     }
 }
