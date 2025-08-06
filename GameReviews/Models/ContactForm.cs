@@ -24,6 +24,8 @@ namespace GameReviews.Models
         public string Message { get; set; } = null!;
 
         public DateTime SubmittedAt { get; set; } = DateTime.UtcNow;
+
+        public bool IsRead { get; set; } = false;
     }
 }
 

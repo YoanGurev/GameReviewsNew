@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using GameReviews.Data;
+using GameReviews.Models;
+using GameReviews.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using GameReviews.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameReviews.Areas.Admin.Controllers
@@ -16,13 +18,28 @@ namespace GameReviews.Areas.Admin.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Inbox()
+        public async Task<IActionResult> Inbox(int page = 1)
         {
-            var messages = await _context.ContactForms
-                .OrderByDescending(m => m.SubmittedAt)
-                .ToListAsync();
+            int pageSize = 5;
 
+            var query = _context.ContactForms
+                .OrderByDescending(m => m.SubmittedAt);
+
+            var messages = await PaginatedList<ContactForm>.CreateAsync(query, page, pageSize);
             return View(messages);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> MarkAsRead(int id)
+        {
+            var message = await _context.ContactForms.FindAsync(id);
+            if (message != null && !message.IsRead)
+            {
+                message.IsRead = true;
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction("Inbox");
         }
     }
 }
