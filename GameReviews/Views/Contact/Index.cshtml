@@ -1,0 +1,30 @@
+﻿@model ContactForm
+@{
+    ViewData["Title"] = "Contact Us";
+}
+
+<h2 class="text-light">Contact Us</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+<form asp-action="Send" method="post">
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label text-light"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label text-light"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Message" class="form-label text-light"></label>
+        <textarea asp-for="Message" class="form-control"></textarea>
+        <span asp-validation-for="Message" class="text-danger"></span>
+    </div>
+    <button class="btn btn-primary">Send</button>
+</form>
