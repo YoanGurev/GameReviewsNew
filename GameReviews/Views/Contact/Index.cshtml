@@ -25,6 +25,12 @@
                 </div>
 
                 <div class="form-floating mb-3">
+                    <input asp-for="Subject" class="form-control" placeholder="Subject" />
+                    <label asp-for="Subject">Subject</label>
+                    <span asp-validation-for="Subject" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating mb-3">
                     <textarea asp-for="Message" class="form-control" style="height: 150px" placeholder="Your Message"></textarea>
                     <label asp-for="Message">Message</label>
                     <span asp-validation-for="Message" class="text-danger"></span>

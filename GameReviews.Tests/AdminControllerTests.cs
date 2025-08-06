@@ -78,9 +78,7 @@ namespace GameReviews.Tests
         {
             var db = GetInMemoryDb();
             await SeedGenresAndPlatforms(db);
-
             var controller = new AdminGamesController(db);
-
             var newGame = new Game
             {
                 Title = "New Game",
@@ -88,13 +86,9 @@ namespace GameReviews.Tests
                 PlatformId = 2,
                 Description = "New Game Description"
             };
-
-
             var result = await controller.Create(newGame);
-
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal(nameof(AdminGamesController.Index), redirectResult.ActionName);
-
             var gameInDb = await db.Games.FirstOrDefaultAsync(g => g.Title == "New Game");
             Assert.NotNull(gameInDb);
         }
@@ -124,15 +118,12 @@ namespace GameReviews.Tests
         public async Task Edit_Post_UpdatesGameAndRedirects()
         {
             var db = GetInMemoryDb();
+            await SeedGenresAndPlatforms(db);
             var game = new Game { Id = 1, Title = "Old Title", GenreId = 1, PlatformId = 1, Description = "Old Desc" };
             db.Games.Add(game);
             await db.SaveChangesAsync();
-
-            
             db.Entry(game).State = EntityState.Detached;
-
             var controller = new AdminGamesController(db);
-
             var updatedGame = new Game
             {
                 Id = 1,
@@ -141,12 +132,9 @@ namespace GameReviews.Tests
                 PlatformId = 2,
                 Description = "Updated Desc"
             };
-
             var result = await controller.Edit(game.Id, updatedGame);
-
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal(nameof(AdminGamesController.Index), redirectResult.ActionName);
-
             var gameInDb = await db.Games.FindAsync(game.Id);
             Assert.Equal("Updated Title", gameInDb.Title);
             Assert.Equal(2, gameInDb.GenreId);
@@ -190,18 +178,13 @@ namespace GameReviews.Tests
         {
             var db = GetInMemoryDb();
             await SeedGenresAndPlatforms(db);
-
             var game = new Game { Id = 1, Title = "To Delete", GenreId = 1, PlatformId = 1, Description = "To delete" };
-
             db.Games.Add(game);
             await db.SaveChangesAsync();
-
             var controller = new AdminGamesController(db);
             var result = await controller.DeleteConfirmed(game.Id);
-
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal(nameof(AdminGamesController.Index), redirectResult.ActionName);
-
             var gameInDb = await db.Games.FindAsync(game.Id);
             Assert.Null(gameInDb);
         }

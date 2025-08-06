@@ -23,6 +23,7 @@ public class ContactController : Controller
         {
             Name = model.Name,
             Email = model.Email,
+            Subject = model.Subject,
             Message = model.Message,
             SubmittedAt = DateTime.UtcNow
         };

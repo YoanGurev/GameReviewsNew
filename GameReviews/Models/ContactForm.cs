@@ -16,7 +16,11 @@ namespace GameReviews.Models
         public string Email { get; set; } = null!;
 
         [Required]
-        [StringLength(1000)]
+        [StringLength(100)]
+        public string Subject { get; set; } = null!;
+
+        [Required]
+        [StringLength(2000)]
         public string Message { get; set; } = null!;
 
         public DateTime SubmittedAt { get; set; } = DateTime.UtcNow;
