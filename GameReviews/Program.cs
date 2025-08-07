@@ -1,5 +1,7 @@
 using GameReviews.Data;
 using GameReviews.Models;
+using GameReviews.Services;
+using GameReviews.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,22 +13,20 @@ builder.Services.AddControllersWithViews()
     {
         options.HtmlHelperOptions.ClientValidationEnabled = true;
     });
-
 builder.Services.AddRazorPages();
-
-
-
-
+builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<IFavoritesService, FavoritesService>();
+builder.Services.AddScoped<IContactService, ContactService>();
+builder.Services.AddScoped<IAdminContactService, AdminContactService>();
+builder.Services.AddScoped<IAdminGameService, AdminGameService>();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false;
 })
 .AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<ApplicationDbContext>();
-
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.Password.RequireDigit = true;
@@ -49,7 +49,6 @@ else
 {
     app.UseDeveloperExceptionPage();
 }
-
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
@@ -93,7 +92,7 @@ Task.Run(async () =>
         }
     }
 
-    // Create default Admin
+    // Default Admin
     string adminEmail = "admin@gamereviews.com";
     string adminPassword = "Admin123!";
 

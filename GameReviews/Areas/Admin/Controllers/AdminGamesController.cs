@@ -1,9 +1,8 @@
-﻿using GameReviews.Data;
-using GameReviews.Models;
+﻿using GameReviews.Models;
+using GameReviews.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 
 namespace GameReviews.Areas.Admin.Controllers
 {
@@ -11,52 +10,32 @@ namespace GameReviews.Areas.Admin.Controllers
     [Authorize(Roles = "Administrator")]
     public class AdminGamesController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IAdminGameService _gameService;
 
-        public AdminGamesController(ApplicationDbContext context)
+        public AdminGamesController(IAdminGameService gameService)
         {
-            _context = context;
+            _gameService = gameService;
         }
 
-        // GET: AdminGames
         public async Task<IActionResult> Index()
         {
-            var games = await _context.Games
-                .Include(g => g.Genre)
-                .Include(g => g.Platform)
-                .ToListAsync();
-
+            var games = await _gameService.GetAllGamesAsync();
             return View(games);
         }
 
-        // GET: AdminGames/Create
         public async Task<IActionResult> Create()
         {
             await LoadDropdownsAsync();
             return View();
         }
 
-        // POST: AdminGames/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Game game)
         {
-            Console.WriteLine($"GenreId: {game.GenreId}, PlatformId: {game.PlatformId}");
-            if (!ModelState.IsValid)
-            {
-                foreach (var entry in ModelState)
-                {
-                    foreach (var error in entry.Value.Errors)
-                    {
-                        Console.WriteLine($"Error for {entry.Key}: {error.ErrorMessage}");
-                    }
-                }
-            }
-
             if (ModelState.IsValid)
             {
-                _context.Games.Add(game);
-                await _context.SaveChangesAsync();
+                await _gameService.CreateGameAsync(game);
                 return RedirectToAction(nameof(Index));
             }
 
@@ -64,82 +43,57 @@ namespace GameReviews.Areas.Admin.Controllers
             return View(game);
         }
 
-
-        // GET: AdminGames/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
-            var game = await _context.Games.FindAsync(id);
+            var game = await _gameService.GetGameByIdAsync(id);
             if (game == null) return NotFound();
 
             await LoadDropdownsAsync();
             return View(game);
         }
 
-        // POST: AdminGames/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Game game)
         {
             if (id != game.Id) return NotFound();
 
-            if (!await _context.Games.AnyAsync(g => g.Id == id))
-                return NotFound();
-
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(game);
-                    await _context.SaveChangesAsync();
-                    TempData["SuccessMessage"] = "Game updated successfully.";
-                    return RedirectToAction(nameof(Index));
-                }
-                catch (DbUpdateException)
-                {
-                    ModelState.AddModelError("", "Failed to update game. Try again.");
-                }
+                await _gameService.UpdateGameAsync(game);
+                TempData["SuccessMessage"] = "Game updated successfully.";
+                return RedirectToAction(nameof(Index));
             }
 
             await LoadDropdownsAsync();
             return View(game);
         }
 
-        // GET: AdminGames/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
-            var game = await _context.Games
-                .Include(g => g.Genre)
-                .Include(g => g.Platform)
-                .FirstOrDefaultAsync(g => g.Id == id);
-
+            var game = await _gameService.GetGameByIdAsync(id);
             if (game == null) return NotFound();
 
             return View(game);
         }
 
-        // POST: AdminGames/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var game = await _context.Games.FindAsync(id);
-            if (game == null) return NotFound();
-
-            _context.Games.Remove(game);
-            await _context.SaveChangesAsync();
-
+            await _gameService.DeleteGameAsync(id);
             TempData["SuccessMessage"] = "Game deleted successfully.";
             return RedirectToAction(nameof(Index));
         }
-        
 
-        // Helper: load dropdowns for Genre and Platform
         private async Task LoadDropdownsAsync()
         {
-            ViewBag.Genres = new SelectList(await _context.Genres.ToListAsync(), "Id", "Name");
-            ViewBag.Platforms = new SelectList(await _context.Platforms.ToListAsync(), "Id", "Name");
+            var dropdowns = await _gameService.GetDropdownsAsync();
+            ViewBag.Genres = dropdowns["Genres"];
+            ViewBag.Platforms = dropdowns["Platforms"];
         }
     }
 }
+
 
 

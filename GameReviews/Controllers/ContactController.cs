@@ -1,39 +1,36 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using GameReviews.Data;
-using GameReviews.Models;
+﻿using GameReviews.Services.Interfaces;
 using GameReviews.Models.ViewModels;
-public class ContactController : Controller
+using GameReviews.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+
+namespace GameReviews.Controllers
 {
-    private readonly ApplicationDbContext _context;
-
-    public ContactController(ApplicationDbContext context)
+    public class ContactController : Controller
     {
-        _context = context;
-    }
-    public IActionResult Index() => View();
+        private readonly IContactService _contactService;
 
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Submit(ContactFormViewModel model)
-    {
-        if (!ModelState.IsValid)
-            return View("Index", model);
-
-        var entity = new ContactForm
+        public ContactController(IContactService contactService)
         {
-            Name = model.Name,
-            Email = model.Email,
-            Subject = model.Subject,
-            Message = model.Message,
-            SubmittedAt = DateTime.UtcNow
-        };
+            _contactService = contactService;
+        }
 
-        _context.ContactForms.Add(entity);
-        await _context.SaveChangesAsync();
+        public IActionResult Index() => View();
 
-        TempData["SuccessMessage"] = "Your message has been sent successfully!";
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Submit(ContactFormViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View("Index", model);
 
-        return RedirectToAction("Index");
+            await _contactService.SubmitContactFormAsync(model);
+
+            TempData["SuccessMessage"] = "Your message has been sent successfully!";
+            return RedirectToAction("Index");
+        }
     }
 }
+
+
 
