@@ -1,6 +1,7 @@
 ﻿using GameReviews.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace GameReviews.Data
 {
@@ -15,10 +16,11 @@ namespace GameReviews.Data
         public DbSet<Genre> Genres { get; set; }
         public DbSet<Platform> Platforms { get; set; }
         public DbSet<Review> Reviews { get; set; }
-
         public DbSet<Favorite> Favorites { get; set; }
         public DbSet<ContactForm> ContactForms { get; set; }
         public DbSet<ReviewVote> ReviewVotes { get; set; }
+        public DbSet<ReviewReply> ReviewReplies { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -49,8 +51,20 @@ namespace GameReviews.Data
 
 
             builder.Entity<Favorite>()
-           .HasIndex(f => new { f.UserId, f.GameId })
-           .IsUnique(); //Prevent duplicates
+                .HasIndex(f => new { f.UserId, f.GameId })
+                .IsUnique(); //Prevent duplicates
+
+            builder.Entity<ReviewReply>()
+                .HasOne(r => r.Review)
+                .WithMany(rv => rv.Replies) 
+                .HasForeignKey(r => r.ReviewId)
+                .OnDelete(DeleteBehavior.Cascade);
+    
+            builder.Entity<ReviewReply>()
+                .HasOne(r => r.User)
+                .WithMany()
+                .HasForeignKey(r => r.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

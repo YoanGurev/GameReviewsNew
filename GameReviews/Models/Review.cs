@@ -29,6 +29,9 @@ namespace GameReviews.Models
         public int Downvotes { get; set; } = 0;
         public ICollection<ReviewVote> Votes { get; set; } = new List<ReviewVote>();
 
+        public ICollection<ReviewReply> Replies { get; set; } = new List<ReviewReply>();
+
+
 
     }
 }

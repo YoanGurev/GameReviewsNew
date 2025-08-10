@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = Model.Title;
+    
+
 
     string? embedVideoUrl = null;
 
@@ -52,6 +54,7 @@
 @if (Model.Reviews.Any())
 {
     <div class="list-group">
+
         @foreach (var review in Model.Reviews.OrderByDescending(r => r.CreatedAt))
         {
             <div class="list-group-item bg-dark text-light border-light rounded mb-2">
@@ -61,20 +64,58 @@
                 <p class="mt-2">@review.Content</p>
 
                 <div>
-                    <form asp-controller="Games" asp-action="Upvote" method="post" class="d-inline">
-                        <input type="hidden" name="id" value="@review.Id" />
-                        <button type="submit" class="btn btn-success btn-sm me-1">
-                            <i class="bi bi-hand-thumbs-up-fill"></i> @review.Upvotes
+                    <div class="d-flex gap-2">
+                        <div class="d-flex gap-2">
+                            <form asp-controller="Games" asp-action="Upvote" method="post" class="vote-form" data-review-id="@review.Id">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@review.Id" />
+                                <button type="submit" class="btn btn-success btn-sm">
+                                    <i class="bi bi-hand-thumbs-up-fill"></i> @review.Upvotes
+                                </button>
+                            </form>
+
+                            <form asp-controller="Games" asp-action="Downvote" method="post" class="vote-form" data-review-id="@review.Id">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@review.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="bi bi-hand-thumbs-down-fill"></i> @review.Downvotes
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
+
+                    <form asp-controller="Games" asp-action="DeleteReview" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="reviewId" value="@review.Id" />
+                        <button type="submit" class="btn btn-link btn-sm text-danger" onclick="return confirm('Are you sure you want to delete this review?');">
+                            Delete Review
                         </button>
                     </form>
 
-                    <form asp-controller="Games" asp-action="Downvote" method="post" class="d-inline">
-                        <input type="hidden" name="id" value="@review.Id" />
-                        <button type="submit" class="btn btn-danger btn-sm">
-                            <i class="bi bi-hand-thumbs-down-fill"></i> @review.Downvotes
-                        </button>
-                    </form>
+
+
+
+
                 </div>
+
+                <div class="replies-container mt-3 mb-2" data-review-id="@review.Id">
+                    <button class="btn btn-link btn-sm show-replies-btn" data-review-id="@review.Id">
+                        Show all replies <i class="bi bi-chevron-down"></i>
+                    </button>
+                    <div class="replies-list mt-2" id="replies-list-@review.Id" style="display:none;">
+                        
+                    </div>
+                </div>
+
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <form class="reply-form mt-2" data-review-id="@review.Id">
+                        @Html.AntiForgeryToken()
+                        <textarea name="content" class="form-control mb-1" placeholder="Write a reply..." required></textarea>
+                        <button type="submit" class="btn btn-primary btn-sm">Post Reply</button>
+                    </form>
+                }
             </div>
         }
     </div>
@@ -117,7 +158,12 @@ else
 }
 else
 {
-    <p><a href="/Identity/Account/Login">Log in</a> to post a review.</p>
+    <p class="text-light"><a href="/Identity/Account/Login">Log in</a> to post a review.</p>
+}
+
+@section Scripts {
+    <script src="~/js/reviewReplies.js"></script>
+    <script src="~/js/reviewVotes.js"></script>
 }
 
 

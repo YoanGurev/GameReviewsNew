@@ -65,22 +65,92 @@ namespace GameReviews.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [Authorize]
+        public async Task<IActionResult> DeleteReview(int reviewId)
+        {
+            var userId = _userManager.GetUserId(User);
+            bool isAdmin = User.IsInRole("Administrator");
+
+            var result = await _gameService.DeleteReviewAsync(reviewId, userId, isAdmin);
+            if (!result) return Forbid();
+
+            // Redirect back to the game details page
+            var review = await _gameService.GetReviewDetailsAsync(reviewId);
+            if (review == null)
+                return RedirectToAction("Index");
+
+            return RedirectToAction("Details", new { id = review.GameId });
+        }
+
+
+
         public async Task<IActionResult> Upvote(int id)
         {
             var user = await _userManager.GetUserAsync(User);
-            var gameId = await _gameService.UpvoteReviewAsync(id, user.Id, true);
-            return RedirectToAction("Details", new { id = gameId });
+            var gameId = await _gameService.HandleVoteAsync(id, user.Id, true);
+            var votes = await _gameService.GetReviewVotesAsync(id);
+            var userVote = await _gameService.GetUserVoteTypeAsync(id, user.Id);
+
+            return Json(new { upvotes = votes.Upvotes, downvotes = votes.Downvotes, userVote });
         }
 
-        [HttpPost]
-        [Authorize]
         public async Task<IActionResult> Downvote(int id)
         {
             var user = await _userManager.GetUserAsync(User);
-            var gameId = await _gameService.DownvoteReviewAsync(id, user.Id, false);
-            return RedirectToAction("Details", new { id = gameId });
+            var gameId = await _gameService.HandleVoteAsync(id, user.Id, false);
+            var votes = await _gameService.GetReviewVotesAsync(id);
+            var userVote = await _gameService.GetUserVoteTypeAsync(id, user.Id);
+
+            return Json(new { upvotes = votes.Upvotes, downvotes = votes.Downvotes, userVote });
         }
+
+
+
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> PostReply(int reviewId, string content)
+        {
+            if (string.IsNullOrWhiteSpace(content))
+                return BadRequest("Reply content cannot be empty.");
+
+            var userId = _userManager.GetUserId(User);
+            var reply = await _gameService.AddReplyAsync(reviewId, userId, content);
+
+            if (reply == null) return NotFound();
+
+            return PartialView("_ReplyPartial", reply);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> DeleteReply(int replyId)
+        {
+            var userId = _userManager.GetUserId(User);
+            bool isAdmin = User.IsInRole("Administrator");
+
+            var result = await _gameService.DeleteReplyAsync(replyId, userId, isAdmin);
+            if (!result) return Forbid();
+
+            // Redirect back to the game details page
+            var reply = await _gameService.GetReplyDetailsAsync(replyId);
+            if (reply == null)
+                return RedirectToAction("Index");
+
+            return RedirectToAction("Details", new { id = reply.Review.GameId });
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetReplies(int reviewId)
+        {
+            var replies = await _gameService.GetRepliesAsync(reviewId);
+            return PartialView("_RepliesListPartial", replies);
+        }
+
+
+
     }
 }
 

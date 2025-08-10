@@ -87,6 +87,20 @@ namespace GameReviews.Services
             _context.Reviews.Add(review);
             await _context.SaveChangesAsync();
         }
+        public async Task<bool> DeleteReviewAsync(int reviewId, string userId, bool isAdmin)
+        {
+            var review = await _context.Reviews.FindAsync(reviewId);
+            if (review == null) return false;
+
+            // Only the owner or admin can delete
+            if (review.UserId != userId && !isAdmin)
+                return false;
+
+            _context.Reviews.Remove(review);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
 
         public async Task<int> UpvoteReviewAsync(int reviewId, string userId, bool isUpvote)
         {
@@ -98,7 +112,7 @@ namespace GameReviews.Services
             return await HandleVoteAsync(reviewId, userId, isUpvote: false);
         }
 
-        private async Task<int> HandleVoteAsync(int reviewId, string userId, bool isUpvote)
+        public async Task<int> HandleVoteAsync(int reviewId, string userId, bool isUpvote)
         {
             var review = await _context.Reviews.FindAsync(reviewId);
             if (review == null) throw new Exception("Review not found");
@@ -149,12 +163,81 @@ namespace GameReviews.Services
             await _context.SaveChangesAsync();
             return review.GameId;
         }
+        public async Task<(int Upvotes, int Downvotes)> GetReviewVotesAsync(int reviewId)
+        {
+            var review = await _context.Reviews.FindAsync(reviewId);
+            if (review == null)
+                return (0, 0);
+
+            return (review.Upvotes, review.Downvotes);
+        }
+
+        public async Task<string?> GetUserVoteTypeAsync(int reviewId, string userId)
+        {
+            var vote = await _context.ReviewVotes.FirstOrDefaultAsync(v => v.ReviewId == reviewId && v.UserId == userId);
+            if (vote == null) return null;
+            return vote.IsUpvote ? "upvote" : "downvote";
+        }
 
 
+        public async Task<ReviewReply> AddReplyAsync(int reviewId, string userId, string content)
+        {
+            var review = await _context.Reviews.FindAsync(reviewId);
+            if (review == null) return null;
+
+            var reply = new ReviewReply
+            {
+                ReviewId = reviewId,
+                UserId = userId,
+                Content = content,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.ReviewReplies.Add(reply);
+            await _context.SaveChangesAsync();
+
+            
+            return await _context.ReviewReplies
+                .Include(r => r.User)
+                .FirstOrDefaultAsync(r => r.Id == reply.Id);
+        }
 
 
+        public async Task<bool> DeleteReplyAsync(int replyId, string userId, bool isAdmin)
+        {
+            var reply = await _context.ReviewReplies.FindAsync(replyId);
+            if (reply == null) return false;
 
+            if (reply.UserId != userId && !isAdmin)
+                return false;
 
+            _context.ReviewReplies.Remove(reply);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<IEnumerable<ReviewReply>> GetRepliesAsync(int reviewId)
+        {
+            return await _context.ReviewReplies
+                .Where(r => r.ReviewId == reviewId)
+                .Include(r => r.User)
+                .OrderBy(r => r.CreatedAt)
+                .ToListAsync();
+        }
+
+        public async Task<Review?> GetReviewDetailsAsync(int reviewId)
+        {
+            return await _context.Reviews
+                .Include(r => r.Game) 
+                .FirstOrDefaultAsync(r => r.Id == reviewId);
+        }
+
+        public async Task<ReviewReply?> GetReplyDetailsAsync(int replyId)
+        {
+            return await _context.ReviewReplies
+                .Include(rr => rr.Review)  
+                .FirstOrDefaultAsync(rr => rr.Id == replyId);
+        }
 
     }
 }

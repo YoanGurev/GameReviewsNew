@@ -65,6 +65,7 @@ namespace GameReviews.Data
             }
 
             // Seed Admin User
+            string adminUserName = "AdminUser";
             string adminEmail = "admin@gamereviews.com";
             string adminPassword = "Admin123!";
 
@@ -73,7 +74,7 @@ namespace GameReviews.Data
             {
                 var user = new ApplicationUser
                 {
-                    UserName = adminEmail,
+                    UserName = adminUserName,
                     Email = adminEmail,
                     EmailConfirmed = true
                 };

@@ -1,0 +1,14 @@
+﻿@model IEnumerable<GameReviews.Models.ReviewReply>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">There are no replies to this review.</p>
+}
+else
+{
+    foreach (var reply in Model)
+    {
+        @Html.Partial("_ReplyPartial", reply)
+    }
+}
+

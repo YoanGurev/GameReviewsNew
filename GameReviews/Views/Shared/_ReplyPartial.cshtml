@@ -1,0 +1,17 @@
+﻿@model GameReviews.Models.ReviewReply
+
+@Html.AntiForgeryToken()
+<div class="reply border rounded p-2 mb-2">
+    <strong>@Model.User.UserName</strong> — @Model.CreatedAt.ToLocalTime().ToString("g")
+    <p>@Model.Content</p>
+    
+
+    <form asp-controller="Games" asp-action="DeleteReply" method="post" class="d-inline">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="replyId" value="@Model.Id" />
+        <button type="submit" class="btn btn-link btn-sm text-danger" onclick="return confirm('Are you sure you want to delete this reply?');">
+            Delete Reply
+        </button>
+    </form>
+</div>
+

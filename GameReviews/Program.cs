@@ -93,6 +93,7 @@ Task.Run(async () =>
     }
 
     // Default Admin
+    string adminUserName = "AdminUser";
     string adminEmail = "admin@gamereviews.com";
     string adminPassword = "Admin123!";
 
@@ -101,7 +102,7 @@ Task.Run(async () =>
     {
         var newAdmin = new ApplicationUser
         {
-            UserName = adminEmail,
+            UserName = adminUserName,
             Email = adminEmail,
             EmailConfirmed = true
         };
