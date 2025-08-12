@@ -1,0 +1,45 @@
+﻿@model GameReviews.Models.GameRequest
+
+@{
+    ViewData["Title"] = "Review Game Request";
+}
+
+<h2 class="text-light mb-4">Review Game Request: @Model.Title</h2>
+
+<div class="card bg-dark text-light p-4 mb-4">
+    <p><strong>Description:</strong> @Model.Description</p>
+    <p><strong>Price:</strong> $@Model.Price</p>
+    <p><strong>Genre:</strong> @Model.Genre?.Name</p>
+    <p><strong>Platform:</strong> @Model.Platform?.Name</p>
+    <p><strong>Image URL:</strong> <a href="@Model.ImageUrl" target="_blank">@Model.ImageUrl</a></p>
+    <p><strong>Video URL:</strong> <a href="@Model.VideoUrl" target="_blank">@Model.VideoUrl</a></p>
+    <p><strong>Requested By:</strong> @Model.RequestedByUser?.UserName</p>
+    <p><strong>Status:</strong> @Model.Status</p>
+    @if (!string.IsNullOrEmpty(Model.AdminResponse))
+    {
+        <p><strong>Admin Response:</strong> @Model.AdminResponse</p>
+        <p><strong>Responded On:</strong> @Model.ResponseDate?.ToLocalTime().ToString("g")</p>
+    }
+</div>
+
+@if (Model.Status == "Pending")
+{
+    <form asp-action="Approve" method="post" class="d-inline">
+        <input type="hidden" name="id" value="@Model.Id" />
+        <button type="submit" class="btn btn-success me-2">Approve</button>
+    </form>
+
+    <form asp-action="Deny" method="post" class="d-inline">
+        <input type="hidden" name="id" value="@Model.Id" />
+        <div class="mb-2">
+            <label for="reason" class="form-label text-light">Reason for denial</label>
+            <textarea id="reason" name="reason" class="form-control" rows="3" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-danger">Deny</button>
+    </form>
+}
+else
+{
+    <a asp-action="Inbox" class="btn btn-secondary mt-3">Back to Requests</a>
+}
+

@@ -19,7 +19,7 @@ namespace GameReviews.Controllers
             _userManager = userManager;
         }
 
-        // GET: /Games
+        
         public async Task<IActionResult> Index(string? genre, string? platform, string? search, int page = 1)
         {
             int pageSize = 6;
@@ -35,7 +35,7 @@ namespace GameReviews.Controllers
             return View(paginatedGames);
         }
 
-        // GET: /Games/Details/5
+        
         public async Task<IActionResult> Details(int id)
         {
             var game = await _gameService.GetGameDetailsAsync(id);
@@ -75,7 +75,7 @@ namespace GameReviews.Controllers
             var result = await _gameService.DeleteReviewAsync(reviewId, userId, isAdmin);
             if (!result) return Forbid();
 
-            // Redirect back to the game details page
+            
             var review = await _gameService.GetReviewDetailsAsync(reviewId);
             if (review == null)
                 return RedirectToAction("Index");
@@ -133,7 +133,7 @@ namespace GameReviews.Controllers
             var result = await _gameService.DeleteReplyAsync(replyId, userId, isAdmin);
             if (!result) return Forbid();
 
-            // Redirect back to the game details page
+            
             var reply = await _gameService.GetReplyDetailsAsync(replyId);
             if (reply == null)
                 return RedirectToAction("Index");

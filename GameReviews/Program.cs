@@ -19,6 +19,8 @@ builder.Services.AddScoped<IFavoritesService, FavoritesService>();
 builder.Services.AddScoped<IContactService, ContactService>();
 builder.Services.AddScoped<IAdminContactService, AdminContactService>();
 builder.Services.AddScoped<IAdminGameService, AdminGameService>();
+builder.Services.AddScoped<IGameRequestService, GameRequestService>();
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>

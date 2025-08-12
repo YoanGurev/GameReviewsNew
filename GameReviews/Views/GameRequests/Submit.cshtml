@@ -1,0 +1,62 @@
+﻿@model GameReviews.Models.GameRequest
+
+@{
+    ViewData["Title"] = "Submit a request for a game";
+}
+
+<h2 class="text-light">Request Game</h2>
+
+<partial name="_ValidationScriptsPartial" />
+
+<div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+<form asp-action="Submit" method="post">
+    @Html.AntiForgeryToken()
+
+    <div class="text-light mb-3">
+        <label asp-for="Title" class="form-label">Game Title</label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="text-light mb-3">
+        <label asp-for="Description" class="form-label">Game Description</label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="text-light mb-3">
+        <label asp-for="Price" class="form-label">Price</label>
+        <input asp-for="Price" class="form-control" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+
+    <div class="text-light mb-3">
+        <label asp-for="GenreId" class="form-label">Genre</label>
+        <select asp-for="GenreId" asp-items="ViewBag.Genres" class="form-select"></select>
+        <span asp-validation-for="GenreId" class="text-danger"></span>
+    </div>
+
+    <div class="text-light mb-3">
+        <label asp-for="PlatformId" class="form-label">Platform</label>
+        <select asp-for="PlatformId" asp-items="ViewBag.Platforms" class="form-select"></select>
+        <span asp-validation-for="PlatformId" class="text-danger"></span>
+    </div>
+
+    <div class="text-light mb-3">
+        <label asp-for="ImageUrl" class="form-label">Image URL</label>
+        <input asp-for="ImageUrl" class="form-control" placeholder="https://example.com/image.jpg" />
+        <span asp-validation-for="ImageUrl" class="text-danger"></span>
+    </div>
+
+    <div class="text-light mb-3">
+        <label asp-for="VideoUrl" class="form-label">Video URL (YouTube, etc.)</label>
+        <input asp-for="VideoUrl" class="form-control" placeholder="https://youtube.com/..." />
+        <span asp-validation-for="VideoUrl" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit Request</button>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
+</form>
+
+

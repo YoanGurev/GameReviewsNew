@@ -84,7 +84,7 @@ namespace GameReviews.Areas.Identity.Pages.Account
                     return Page();
                 }
             }
-            ModelState.AddModelError(string.Empty, "TEST ERROR: You should see this.");
+            
 
             return Page();
         }

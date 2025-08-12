@@ -1,0 +1,36 @@
+﻿@model IEnumerable<GameReviews.Models.GameRequest>
+
+<h2 class="text-light">Game Requests Inbox</h2>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">No game requests at the moment.</p>
+}
+else
+{
+    <table class="table table-dark table-striped">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Requested By</th>
+                <th>Status</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var request in Model)
+            {
+                <tr>
+                    <td>@request.Title</td>
+                    <td>@request.RequestedByUser?.UserName</td>
+                    <td>@request.Status</td>
+                    <td>
+                        <a asp-action="Review" asp-route-id="@request.Id" class="btn btn-primary btn-sm">Review</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+

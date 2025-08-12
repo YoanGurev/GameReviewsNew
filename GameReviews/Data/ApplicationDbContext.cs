@@ -20,6 +20,8 @@ namespace GameReviews.Data
         public DbSet<ContactForm> ContactForms { get; set; }
         public DbSet<ReviewVote> ReviewVotes { get; set; }
         public DbSet<ReviewReply> ReviewReplies { get; set; }
+        public DbSet<GameRequest> GameRequests { get; set; }
+
 
 
 
