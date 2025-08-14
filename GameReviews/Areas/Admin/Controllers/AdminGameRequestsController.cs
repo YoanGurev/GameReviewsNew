@@ -58,7 +58,7 @@ namespace GameReviews.Areas.Admin.Controllers
             
             await _gameRequestService.UpdateRequestStatusAsync(id, "Approved", "Your request was approved.");
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Inbox");
         }
 
         [HttpPost]
@@ -70,7 +70,7 @@ namespace GameReviews.Areas.Admin.Controllers
 
             await _gameRequestService.UpdateRequestStatusAsync(id, "Denied", reason);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Inbox");
         }
 
 

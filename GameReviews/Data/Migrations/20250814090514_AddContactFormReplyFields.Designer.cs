@@ -4,6 +4,7 @@ using GameReviews.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameReviews.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250814090514_AddContactFormReplyFields")]
+    partial class AddContactFormReplyFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -109,12 +112,13 @@ namespace GameReviews.Data.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("RepliedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("RepliedByUserId")
+                    b.Property<string>("RepliedByuserId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ReplyMessage")
@@ -129,11 +133,9 @@ namespace GameReviews.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("SubmittedByUserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("SubmittedByUserId");
 
                     b.ToTable("ContactForms");
                 });
@@ -541,15 +543,6 @@ namespace GameReviews.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("GameReviews.Models.ContactForm", b =>
-                {
-                    b.HasOne("GameReviews.Models.ApplicationUser", "SubmittedByUser")
-                        .WithMany()
-                        .HasForeignKey("SubmittedByUserId");
-
-                    b.Navigation("SubmittedByUser");
                 });
 
             modelBuilder.Entity("GameReviews.Models.Favorite", b =>

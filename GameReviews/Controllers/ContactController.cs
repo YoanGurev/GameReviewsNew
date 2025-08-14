@@ -1,6 +1,7 @@
-﻿using GameReviews.Services.Interfaces;
+﻿using GameReviews.Models;
 using GameReviews.Models.ViewModels;
 using GameReviews.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -15,7 +16,11 @@ namespace GameReviews.Controllers
             _contactService = contactService;
         }
 
-        public IActionResult Index() => View();
+        [HttpGet]
+        public IActionResult Index()
+        {
+            return View(new ContactFormViewModel());
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -24,13 +29,23 @@ namespace GameReviews.Controllers
             if (!ModelState.IsValid)
                 return View("Index", model);
 
-            await _contactService.SubmitContactFormAsync(model);
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            ApplicationUser? user = null;
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                user = await _contactService.FindByIdAsync(userId);
+            }
+
+            await _contactService.SubmitContactFormAsync(model, user);
 
             TempData["SuccessMessage"] = "Your message has been sent successfully!";
             return RedirectToAction("Index");
         }
+
     }
 }
+
 
 
 

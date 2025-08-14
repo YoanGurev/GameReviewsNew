@@ -36,24 +36,28 @@ else
                     <td>
                         @if (message.IsRead)
                         {
-                            <span class="badge bg-success">Read</span>
+                            <span class="badge bg-success">Replied</span>
                         }
                         else
                         {
-                            <span class="badge bg-warning text-white">Unread</span>
+                            <span class="badge bg-warning text-white">Not Replied</span>
                         }
                     </td>
                     <td>
                         @if (!message.IsRead)
                         {
-                            <form asp-action="MarkAsRead" asp-route-id="@message.Id" method="post">
-                                <button class="btn btn-sm btn-outline-success" type="submit">Mark as Read</button>
+                            <form asp-action="Reply" asp-route-id="@message.Id" method="get" class="d-inline">
+                                <button class="btn btn-sm btn-outline-primary">Send Reply</button>
                             </form>
                         }
                         else
                         {
-                            <span class="text-muted">—</span>
+                            <span class="text-muted">Replied</span>
+                            <p class="mt-1"><strong>Reply:</strong> @message.ReplyMessage</p>
+                            <p><small>Replied at: @message.RepliedAt?.ToLocalTime().ToString("g")</small></p>
                         }
+
+                        
                     </td>
                 </tr>
             }

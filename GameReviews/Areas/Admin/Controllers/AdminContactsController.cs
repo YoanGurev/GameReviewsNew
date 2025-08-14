@@ -2,6 +2,7 @@
 using GameReviews.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace GameReviews.Areas.Admin.Controllers
 {
@@ -23,12 +24,37 @@ namespace GameReviews.Areas.Admin.Controllers
             return View(messages);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> MarkAsRead(int id)
+        [HttpGet]
+        public async Task<IActionResult> Reply(int id)
         {
-            await _contactService.MarkAsReadAsync(id);
+            var message = await _contactService.GetMessageByIdAsync(id);
+            if (message == null) return NotFound();
+
+            return View(message);
+        }
+        
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Reply(int id, string replyMessage)
+        {
+            if (string.IsNullOrWhiteSpace(replyMessage))
+            {
+                TempData["ErrorMessage"] = "Reply cannot be empty.";
+                return RedirectToAction("Reply", new { id });
+            }
+
+            var adminUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var success = await _contactService.ReplyToMessageAsync(id, replyMessage, adminUserId);
+            if (!success) return NotFound();
+
+            TempData["SuccessMessage"] = "Message replied successfully.";
             return RedirectToAction("Inbox");
         }
+
+
+
+
     }
 }
 

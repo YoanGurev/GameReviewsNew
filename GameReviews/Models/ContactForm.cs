@@ -7,12 +7,10 @@ namespace GameReviews.Models
     {
         public int Id { get; set; }
 
-        [Required]
-        [StringLength(100)]
+        
         public string Name { get; set; } = null!;
 
-        [Required]
-        [EmailAddress]
+        
         public string Email { get; set; } = null!;
 
         [Required]
@@ -26,6 +24,12 @@ namespace GameReviews.Models
         public DateTime SubmittedAt { get; set; } = DateTime.UtcNow;
 
         public bool IsRead { get; set; } = false;
+
+        public string? ReplyMessage {  get; set; }
+        public DateTime? RepliedAt { get; set; }
+        public string? RepliedByUserId { get; set; }
+        public string? SubmittedByUserId { get; set; }
+        
     }
 }
 

@@ -21,15 +21,25 @@ namespace GameReviews.Services
 
             return await PaginatedList<ContactForm>.CreateAsync(query, page, pageSize);
         }
+        public async Task<ContactForm?> GetMessageByIdAsync(int id)
+        {
+            return await _context.ContactForms.FirstOrDefaultAsync(m => m.Id == id);
+        }
 
-        public async Task<bool> MarkAsReadAsync(int id)
+        public async Task<bool> ReplyToMessageAsync(int id, string replyMessage, string adminUserId)
         {
             var message = await _context.ContactForms.FindAsync(id);
-            if (message == null || message.IsRead) return false;
+            if (message == null) return false;
 
+            message.ReplyMessage = replyMessage;
+            message.RepliedByUserId = adminUserId;
+            message.RepliedAt = DateTime.UtcNow;
             message.IsRead = true;
+
             await _context.SaveChangesAsync();
             return true;
         }
+
+
     }
 }

@@ -1,0 +1,88 @@
+﻿@model GameReviews.Models.ViewModels.UserInboxViewModel
+
+@{
+    ViewData["Title"] = "My Inbox";
+}
+
+<h2 class="text-light mb-4">Your Inbox</h2>
+
+<h4 class="text-light mt-4">Game Requests</h4>
+@if (!Model.GameRequests.Any())
+{
+    <p class="text-muted">No game requests submitted yet.</p>
+}
+else
+{
+    <table class="table table-dark table-striped">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Admin Response</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var request in Model.GameRequests)
+            {
+                <tr>
+                    <td>@request.Title</td>
+                    <td>@request.Status</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(request.AdminResponse))
+                        {
+                            @request.AdminResponse
+                        }
+                        else if (request.Status == "Pending")
+                        {
+                            <span class="text-warning">Pending</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">—</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<h4 class="text-light mt-5">Contact Messages</h4>
+@if (!Model.ContactMessages.Any())
+{
+    <p class="text-muted">No messages yet.</p>
+}
+else
+{
+    <table class="table table-dark table-striped">
+        <thead>
+            <tr>
+                <th>Subject</th>
+                <th>Message</th>
+                <th>Admin Reply</th>
+                <th>Submitted On</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var message in Model.ContactMessages)
+            {
+                <tr>
+                    <td>@message.Subject</td>
+                    <td>@message.Message</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(message.ReplyMessage))
+                        {
+                            @message.ReplyMessage
+                        }
+                        else
+                        {
+                            <span class="text-muted">—</span>
+                        }
+                    </td>
+                    <td>@message.SubmittedAt.ToLocalTime().ToString("g")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+

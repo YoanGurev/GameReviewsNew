@@ -1,4 +1,5 @@
 ﻿@model GameReviews.Models.ViewModels.ContactFormViewModel
+
 @{
     ViewData["Title"] = "Contact Us";
 }
@@ -8,21 +9,30 @@
         <div class="col-md-8">
             <h2 class="text-center text-light mb-4">Contact Us</h2>
 
-            <form asp-action="Submit" method="post">
+            <form asp-controller="Contact" asp-action="Submit" method="post">
                 @Html.AntiForgeryToken()
                 <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-                <div class="form-floating mb-3">
-                    <input asp-for="Name" class="form-control" placeholder="Your Name" />
-                    <label asp-for="Name">Name</label>
-                    <span asp-validation-for="Name" class="text-danger"></span>
-                </div>
+                
+                @if (User.Identity?.IsAuthenticated ?? false)
+                {
+                    <input type="hidden" asp-for="Name" value="@User.Identity.Name" />
+                    <input type="hidden" asp-for="Email" value="@User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value" />
+                }
+                else
+                {
+                    <div class="form-floating mb-3">
+                        <input asp-for="Name" class="form-control" placeholder="Your Name" />
+                        <label asp-for="Name">Name</label>
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
 
-                <div class="form-floating mb-3">
-                    <input asp-for="Email" class="form-control" placeholder="you@example.com" />
-                    <label asp-for="Email">Email</label>
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
+                    <div class="form-floating mb-3">
+                        <input asp-for="Email" class="form-control" placeholder="you@example.com" />
+                        <label asp-for="Email">Email</label>
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                }
 
                 <div class="form-floating mb-3">
                     <input asp-for="Subject" class="form-control" placeholder="Subject" />
@@ -31,13 +41,23 @@
                 </div>
 
                 <div class="form-floating mb-3">
-                    <textarea asp-for="Message" class="form-control" style="height: 150px" placeholder="Your Message"></textarea>
+                    <textarea asp-for="Message" class="form-control" style="height: 150px" placeholder="Your message"></textarea>
                     <label asp-for="Message">Message</label>
                     <span asp-validation-for="Message" class="text-danger"></span>
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100">Send Message</button>
             </form>
+
+            
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success mt-3">@TempData["SuccessMessage"]</div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger mt-3">@TempData["ErrorMessage"]</div>
+            }
         </div>
     </div>
 </div>
@@ -45,4 +65,6 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+
+
 

@@ -1,0 +1,28 @@
+﻿@model GameReviews.Models.ContactForm
+
+@{
+    ViewData["Title"] = "Reply to Message";
+}
+
+<h2 class="text-light mb-4">Reply to: @Model.Subject</h2>
+
+<div class="card bg-dark text-light p-4 mb-4">
+    <p><strong>From:</strong> @Model.Name (@Model.Email)</p>
+    <p><strong>Message:</strong></p>
+    <p>@Model.Message</p>
+</div>
+
+<form asp-action="Reply" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="id" value="@Model.Id" />
+
+    <div class="mb-3">
+        <label for="replyMessage" class="form-label text-light">Your Reply</label>
+        <textarea id="replyMessage" name="replyMessage" class="form-control" rows="5" required></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-success">Send Reply</button>
+    <a asp-action="Inbox" class="btn btn-secondary ms-2">Cancel</a>
+</form>
+
+
